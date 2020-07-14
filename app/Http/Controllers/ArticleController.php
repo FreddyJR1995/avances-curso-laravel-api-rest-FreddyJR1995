@@ -12,15 +12,24 @@ class ArticleController extends Controller
 {
     public function index() {
         return new ArticleCollection(Article::paginate());
-    } public function show(Article  $article) {
+    }
+    public function show(Article  $article) {
         return new ArticleResource($article);
-    } public function store(Request $request) {
+    }
+    public function store(Request $request) {
+        $validatedData = $request->validate([
+            'title' => 'required|string|unique:articles|max:255',
+            'body' => 'required',
+            ]);
+
         $article=Article::create($request->all());
         return response()->json($article, 201);
-    } public function update(Request $request, Article $article) {
+    }
+    public function update(Request $request, Article $article) {
         $article->update($request->all());
         return response()->json($article,200);
-    } public function delete(Article $article) {
+    }
+    public function delete(Article $article) {
         $article->delete();
         return reponse()->json(null,204);
     }
