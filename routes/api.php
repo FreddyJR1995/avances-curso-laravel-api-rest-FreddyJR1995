@@ -21,15 +21,18 @@ Route::post('register', 'UserController@register');
 Route::post('login', 'UserController@authenticate');
 Route::get('articles', 'ArticleController@index');
 
-Route::group(['middleware' => ['jwt.verify']], function() {
+Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('user', 'UserController@getAuthenticatedUser');
+    //image
+    Route::get('articles/{article}/image', 'ArticleController@image');
+
     //Articles
     Route::get('articles/{article}', 'ArticleController@show');
     Route::post('articles', 'ArticleController@store');
     Route::put('articles/{article}', 'ArticleController@update');
     Route::delete('articles/{article}', 'ArticleController@delete');
-    //Descargar imagesArticle
-    Route::get('articles/{article}/image', 'ArticleController@image');
+
+
     //Comments
     Route::get('articles/{article}/comments', 'CommentController@index');
     Route::get('articles/{article}/comments/{comment}', 'CommentController@show');
