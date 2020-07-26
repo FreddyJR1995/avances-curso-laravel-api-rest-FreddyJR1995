@@ -7,6 +7,7 @@ use App\Http\Resources\Article as ArticleResource;
 use App\Http\Resources\ArticleCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use phpDocumentor\Reflection\Types\Collection;
 
 class ArticleController extends Controller
@@ -19,11 +20,13 @@ class ArticleController extends Controller
 
     public function index()
     {
+        //$this->authorize('viewAny', Article::class);
         return new ArticleCollection(Article::paginate(10));
     }
 
     public function show(Article $article)
     {
+        $this->authorize('view', $article);
         return response()->json(new ArticleResource($article), 200);
     }
 
@@ -31,8 +34,10 @@ class ArticleController extends Controller
     {
         return response()->download(public_path(Storage::url($article->image)), $article->title);
     }
+
     public function store(Request $request)
     {
+        $this->authorize('create', Article::class);
         $request->validate([
             'title' => 'required|string|unique:articles|max:255',
             'body' => 'required',
@@ -52,6 +57,7 @@ class ArticleController extends Controller
 
     public function update(Request $request, Article $article)
     {
+        $this->authorize('update', $article);
         $request->validate([
             'title' => 'required|string|unique:articles,title,' . $article->id . '|max:255',
             'body' => 'required',
@@ -64,6 +70,7 @@ class ArticleController extends Controller
 
     public function delete(Article $article)
     {
+        $this->authorize('delete',$article);
         $article->delete();
         return reponse()->json(null, 204);
     }
